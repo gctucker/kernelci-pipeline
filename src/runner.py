@@ -52,6 +52,26 @@ class Runner:
         self._logger.log_message(logging.INFO, "Generating job")
         self._logger.log_message(logging.INFO, f"tmp: {tmp}")
         revision = node['revision']
+        print("HEY")
+        print(f"runtime stuff: {self._runtime.config.config_path}")
+
+
+        # From kernelci-core:
+        # config/base/base-k8s.jinja2
+        # config/base/base-k8s-python.jinja2
+        # config/base/base-shell.jinja2
+        # config/base/base-shell-python.jinja2
+
+        # Test plans:
+        # config/plan/check-describe.jinja2
+        # config/plan/kunit.jinja2
+
+        # The plans use {% extends base_template %} where base_template is
+        # 'base-{runtime}{variant}' e.g. runtime=shell, variant=python
+
+        # The base_template variable should be put together in Python and
+        # passed as-is to the template to keep the logic separate.
+
         params = {
             'db_config_yaml': self._db_config.to_yaml(),
             'name': plan_config.name,
@@ -61,7 +81,7 @@ class Runner:
             'node_id': node['_id'],
             'tarball_url': node['artifacts']['tarball'],
             'workspace': tmp,
-            'base': 'base',
+            'base_template': 'base-python.jinja2',
         }
         params.update(plan_config.params)
         params.update(device_config.params)
@@ -125,8 +145,7 @@ class Runner:
         try:
             while True:
                 tarball_node = self._db.receive_node(sub_id)
-                job, tmp = self._schedule_test(tarball_node, plan,
-                                               device)
+                job, tmp = self._schedule_test(tarball_node, plan, device)
                 if self._runtime.config.lab_type == 'shell':
                     self._job_tmp_dirs[job] = tmp
                 self._cleanup_paths()
@@ -142,7 +161,7 @@ class Runner:
             job, tmp = self._schedule_test(tarball_node, plan, device)
             if keep_path:
                 self._logger.log_message(
-                    logging.INFO, f"Keeping job in {keep_path}")
+                    logging.INFO, f"Keeping copy in {keep_path}")
                 if os.path.exists(keep_path):
                     shutil.rmtree(keep_path)
                 shutil.copytree(tmp.name, keep_path)
