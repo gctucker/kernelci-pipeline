@@ -68,6 +68,14 @@ RUN apt-get update && apt-get install -y \
     azure-cli
 
 
+# HACKS
+RUN mkdir /etc/kernelci/inline
+RUN mv /etc/kernelci/scripts/* /etc/kernelci/inline/
+RUN rmdir /etc/kernelci/scripts
+RUN mv /etc/kernelci/kubernetes/* /etc/kernelci/inline
+RUN rmdir /etc/kernelci/kubernetes
+
+
 # -----------------------------------------------------------------------------
 # Switch back to kernelci user
 #
