@@ -52,9 +52,6 @@ class Runner:
         self._logger.log_message(logging.INFO, "Generating job")
         self._logger.log_message(logging.INFO, f"tmp: {tmp}")
         revision = node['revision']
-        print("HEY")
-        print(f"runtime stuff: {self._runtime.config.config_path}")
-
 
         # From kernelci-core:
         # config/inline/base-shell.jinja2
@@ -84,7 +81,7 @@ class Runner:
             'node_id': node['_id'],
             'tarball_url': node['artifacts']['tarball'],
             'workspace': tmp,
-            'base_template': 'base-python.jinja2',
+            'base_template': 'base-shell-python.jinja2',
         }
         params.update(plan_config.params)
         params.update(device_config.params)
@@ -93,6 +90,7 @@ class Runner:
             for path in ['config', '/etc/kernelci']
         ]
         print(f"templates path: {templates_path}")
+        print(plan_config.get_template_path(None))
         job = self._runtime.generate(
             params, device_config, plan_config,
             templates_path=templates_path
@@ -101,7 +99,7 @@ class Runner:
         self._logger.log_message(logging.INFO, f"output_file: {output_file}")
         return output_file
 
-    def _schedule_test(self, tarball_node, plan, device):
+    def _schedule_test(self, tarball_node, plan, device, keep_path):
         self._logger.log_message(logging.INFO, "Tarball: {}".format(
             tarball_node['artifacts']['tarball']
         ))
@@ -111,6 +109,13 @@ class Runner:
 
         tmp = tempfile.TemporaryDirectory(dir=self._output)
         output_file = self._generate_job(node, plan, device, tmp.name)
+
+        if keep_path:
+            self._logger.log_message(
+                logging.INFO, f"Keeping copy in {keep_path}")
+            if os.path.exists(keep_path):
+                shutil.rmtree(keep_path)
+            shutil.copytree(tmp.name, keep_path)
 
         self._logger.log_message(logging.INFO, "Running test")
         job = self._runtime.submit(output_file)
@@ -161,13 +166,7 @@ class Runner:
 
     def _run_single_job(self, tarball_node, plan, device, keep_path=None):
         try:
-            job, tmp = self._schedule_test(tarball_node, plan, device)
-            if keep_path:
-                self._logger.log_message(
-                    logging.INFO, f"Keeping copy in {keep_path}")
-                if os.path.exists(keep_path):
-                    shutil.rmtree(keep_path)
-                shutil.copytree(tmp.name, keep_path)
+            job, tmp = self._schedule_test(tarball_node, plan, device, keep_path)
             if self._runtime.config.lab_type == 'shell':
                 self._logger.log_message(logging.INFO, "Waiting...")
                 job.wait()
