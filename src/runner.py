@@ -57,14 +57,17 @@ class Runner:
 
 
         # From kernelci-core:
-        # config/base/base-k8s.jinja2
-        # config/base/base-k8s-python.jinja2
-        # config/base/base-shell.jinja2
-        # config/base/base-shell-python.jinja2
+        # config/inline/base-shell.jinja2
+        # config/inline/base-shell-python.jinja2
+        # config/inline/base-k8s.jinja2
+        # config/inline/base-k8s-python.jinja2
+        # config/inline/base-lava.jinja2
+        # config/inline/base-lava-python.jinja2
 
-        # Test plans:
-        # config/plan/check-describe.jinja2
-        # config/plan/kunit.jinja2
+        # Test plans in kernelci-pipeline:
+        # config/inline/kver.jinja2
+        # config/inline/kunit.jinja2
+        # config/inline/kbuild.jinja2
 
         # The plans use {% extends base_template %} where base_template is
         # 'base-{runtime}{variant}' e.g. runtime=shell, variant=python
@@ -85,11 +88,11 @@ class Runner:
         }
         params.update(plan_config.params)
         params.update(device_config.params)
-        config_path = self._runtime.config.config_path
         templates_path = [
-            os.path.join(path, config_path)
+            os.path.join(path, self._runtime.config.config_path)
             for path in ['config', '/etc/kernelci']
         ]
+        print(f"templates path: {templates_path}")
         job = self._runtime.generate(
             params, device_config, plan_config,
             templates_path=templates_path
