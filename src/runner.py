@@ -9,6 +9,7 @@
 import json
 import logging
 import os
+import shutil
 import sys
 import tempfile
 
@@ -60,6 +61,7 @@ class Runner:
             'node_id': node['_id'],
             'tarball_url': node['artifacts']['tarball'],
             'workspace': tmp,
+            'base': 'base',
         }
         params.update(plan_config.params)
         params.update(device_config.params)
@@ -135,9 +137,15 @@ class Runner:
             self._cleanup_paths()
             return True
 
-    def _run_single_job(self, tarball_node, plan, device):
+    def _run_single_job(self, tarball_node, plan, device, keep_path=None):
         try:
             job, tmp = self._schedule_test(tarball_node, plan, device)
+            if keep_path:
+                self._logger.log_message(
+                    logging.INFO, f"Keeping job in {keep_path}")
+                if os.path.exists(keep_path):
+                    shutil.rmtree(keep_path)
+                shutil.copytree(tmp.name, keep_path)
             if self._runtime.config.lab_type == 'shell':
                 self._logger.log_message(logging.INFO, "Waiting...")
                 job.wait()
@@ -165,8 +173,9 @@ class Runner:
 
         plan_config = self._plan_configs[args.plan]
         device_config = self._device_configs[args.target]
-        return self._run_single_job(tarball_node, plan_config,
-                                    device_config)
+        keep_path = f"{args.output}/job" if args.keep else None
+        return self._run_single_job(
+            tarball_node, plan_config, device_config, keep_path)
 
 
 class cmd_loop(Command):
@@ -194,17 +203,18 @@ class cmd_run(Command):
             'name': '--git-commit',
             'help': "git commit rather than pub/sub event",
         },
+        {
+            'name': '--keep',
+            'action': 'store_true',
+            'help': "Keep the generated job file",
+        },
     ]
 
     def __call__(self, configs, args):
         if not args.node_id and not args.git_commit:
             print("Either --node-id or --git-commit is required",
                   file=sys.stderr)
-        try:
-            return Runner(configs, args).run(args)
-        except Exception as e:
-            print(f"Error: {e}", file=sys.stderr)
-            return False
+        return Runner(configs, args).run(args)
 
 
 if __name__ == '__main__':
