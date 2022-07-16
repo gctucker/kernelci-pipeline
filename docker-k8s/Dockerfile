@@ -68,19 +68,6 @@ RUN apt-get update && apt-get install -y \
     azure-cli
 
 
-# HACKS
-RUN mkdir /etc/kernelci/inline
-RUN mv /etc/kernelci/scripts/base.jinja2 \
-    /etc/kernelci/inline/base-shell.jinja2
-RUN mv /etc/kernelci/scripts/base-python.jinja2 \
-    /etc/kernelci/inline/base-shell-python.jinja2
-RUN sed -i s/'base\.jinja2'/'base-shell\.jinja2'/ \
-    /etc/kernelci/inline/base-shell-python.jinja2
-RUN rmdir /etc/kernelci/scripts
-RUN mv /etc/kernelci/kubernetes/* /etc/kernelci/inline
-RUN rmdir /etc/kernelci/kubernetes
-
-
 # -----------------------------------------------------------------------------
 # Switch back to kernelci user
 #
