@@ -53,18 +53,23 @@ class Runner:
         self._logger.log_message(logging.INFO, f"tmp: {tmp}")
         revision = node['revision']
 
-        # From kernelci-core:
-        # config/inline/base-shell.jinja2
-        # config/inline/base-shell-python.jinja2
-        # config/inline/base-k8s.jinja2
-        # config/inline/base-k8s-python.jinja2
-        # config/inline/base-lava.jinja2
-        # config/inline/base-lava-python.jinja2
+        # Base templates:
+        # config/run/base/shell.jinja2
+        # config/run/base/shell-python.jinja2
+        # config/run/base/k8s.jinja2
+        # config/run/base/k8s-python.jinja2
+        # config/run/base/lava.jinja2
+        # config/run/base/lava-python.jinja2
 
-        # Test plans in kernelci-pipeline:
-        # config/inline/kver.jinja2
-        # config/inline/kunit.jinja2
-        # config/inline/kbuild.jinja2
+        # Extra templates for LAVA:
+        # config/run/lava/ramdisk.jinja2
+        # config/run/lava/depthcharge.jinja2
+        # config/run/lava/...
+
+        # Test plans:
+        # config/run/kver.jinja2
+        # config/run/kunit.jinja2
+        # config/run/kbuild.jinja2
 
         # The plans use {% extends base_template %} where base_template is
         # 'base-{runtime}{variant}' e.g. runtime=shell, variant=python
@@ -86,8 +91,8 @@ class Runner:
         params.update(plan_config.params)
         params.update(device_config.params)
         templates_path = [
-            os.path.join(path, self._runtime.config.config_path)
-            for path in ['config', '/etc/kernelci']
+            'config/runtime',
+            '/etc/kernelci/runtime',
         ]
         print(f"templates path: {templates_path}")
         print(plan_config.get_template_path(None))
