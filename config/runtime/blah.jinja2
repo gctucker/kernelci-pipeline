@@ -1,0 +1,10 @@
+{# -*- mode: sh -*- -#}
+{# SPDX-License-Identifier: LGPL-2.1-or-later -#}
+
+{% set base_template = 'base/' + runtime + '.jinja2' %}
+{%- extends base_template %}
+
+{%- block commands -%}
+{{ super() }}
+echo "Blah blah."
+{% endblock %}

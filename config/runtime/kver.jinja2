@@ -1,0 +1,17 @@
+{# -*- mode: Python -*- -#}
+{# SPDX-License-Identifier: LGPL-2.1-or-later -#}
+
+{% set base_template = 'base/' + runtime + '-python.jinja2' %}
+{%- extends base_template %}
+
+{%- block python_imports %}
+{{ super() }}
+# Extra imports here...
+{%- endblock %}
+
+{%- block python_body %}
+def main(argv):
+    print("Alright then.")
+    print("{{ kver.message }}")
+    return True
+{% endblock %}
