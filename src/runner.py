@@ -54,10 +54,9 @@ class Runner:
         params = {
             'db_config_yaml': self._db_config.to_yaml(),
             'name': plan_config.name,
-            'git_url': revision['url'],
-            'git_commit': revision['commit'],
-            'git_describe': revision['describe'],
             'node_id': node['_id'],
+            'revision': revision,
+            'runtime': self._runtime.config.lab_type,
             'tarball_url': node['artifacts']['tarball'],
             'workspace': tmp,
         }
@@ -111,7 +110,7 @@ class RunnerLoop(Runner):
                                  "Press Ctrl-C to stop.")
 
         # ToDo: iterate over test configs
-        plan = self._plan_configs['check-describe']
+        plan = self._plan_configs['kver']
 
         # ToDo: iterate over device types for the current runtime
         device_type = self._runtime.config.lab_type
