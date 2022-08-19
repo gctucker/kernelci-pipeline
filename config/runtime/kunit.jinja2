@@ -144,5 +144,10 @@ cd {src_path}
         api_helper = kernelci.api.helper.APIHelper(api)
         api_helper.submit_results(result, node)
 
+        # HACK to also set parent node to complete
+        parent = api.get_node(node['parent'])
+        parent['state'] = 'done'
+        api.update_node(parent)
+
         return node
 {% endblock %}
