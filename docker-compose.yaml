@@ -10,7 +10,7 @@ services:
 
   monitor: &base-service
     container_name: 'kernelci-pipeline-monitor'
-    image: 'kernelci/staging-kernelci'
+    image: 'gtucker/kernelci'
     env_file: ['.env']
     stop_signal: 'SIGINT'
     command:
@@ -23,7 +23,7 @@ services:
 
   scheduler: &scheduler
     container_name: 'kernelci-pipeline-scheduler'
-    image: 'kernelci/staging-kernelci'
+    image: 'gtucker/kernelci'
     env_file: ['.env']
     stop_signal: 'SIGINT'
     command:
@@ -65,7 +65,7 @@ services:
   scheduler-k8s:
     <<: *scheduler
     container_name: 'kernelci-pipeline-scheduler-k8s'
-    image: 'kernelci/staging-k8s:kernelci'
+    image: 'gtucker/k8s:kernelci'
     command:
       - './pipeline/scheduler.py'
       - '--settings=${KCI_SETTINGS:-/home/kernelci/config/kernelci.toml}'
