@@ -59,7 +59,7 @@ class Trigger(Service):
             'branch': build_config.branch,
             'commit': head_commit,
         }
-        timeout = datetime.utcnow() + timedelta(hours=1)
+        timeout = datetime.utcnow() + timedelta(minutes=2)
         node = {
             'name': 'checkout',
             'path': ['checkout'],

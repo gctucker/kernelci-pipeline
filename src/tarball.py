@@ -103,7 +103,7 @@ git archive --format=tar --prefix={name}/ HEAD | gzip > {output}/{tarball}
             'artifacts': {
                 'tarball': tarball_url,
             },
-            'holdoff': str(datetime.utcnow() + timedelta(minutes=10))
+            'holdoff': str(datetime.utcnow() + timedelta(minutes=1)),
         })
         try:
             self._api.update_node(node)
