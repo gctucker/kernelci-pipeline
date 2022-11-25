@@ -170,6 +170,11 @@ class Closing(TimeoutService):
         self.log.info("Press Ctrl-C to stop.")
 
         while True:
+            # ToDo:
+            # 1. flush pub/sub for any pending events ('closing' nodes)
+            # 2. query for any nodes in 'closing' state
+            # 3.a if any, check if their child nodes are done and sleep if not
+            # 3.b if none, listen for nodes entering 'closing' state on pub/sub
             closing_nodes = self._get_closing_nodes()
             self._check_closing_nodes(closing_nodes)
             sleep(ctx['poll_period'])
