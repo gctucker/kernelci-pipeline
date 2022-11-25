@@ -192,7 +192,7 @@ class cmd_run(Command):
             'name': '--poll-period',
             'type': int,
             'help': "Polling period in seconds",
-            'default': 60,
+            'default': 6,
         },
         {
             'name': '--mode',
