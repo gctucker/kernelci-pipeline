@@ -10,6 +10,7 @@ services:
 
   monitor: &base-service
     container_name: 'kernelci-pipeline-monitor'
+    # ToDo: '${DOCKER_BASE:-kernelci/staging-}kernelci'
     image: 'gtucker/kernelci'
     env_file: ['.env']
     stop_signal: 'SIGINT'
