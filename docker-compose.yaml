@@ -92,6 +92,7 @@ services:
       - './data/ssh:/home/kernelci/data/ssh'
       - './data/src:/home/kernelci/data/src'
       - './data/output:/home/kernelci/data/output'
+      - '/home/gtucker/src/linux:/home/kernelci/linux'
 
   trigger:
     <<: *base-service
@@ -100,6 +101,10 @@ services:
       - './pipeline/trigger.py'
       - '--settings=${KCI_SETTINGS:-/home/kernelci/config/kernelci.toml}'
       - 'run'
+    volumes:
+      - './src:/home/kernelci/pipeline'
+      - './config:/home/kernelci/config'
+      - '/home/gtucker/src/linux:/home/kernelci/linux'
 
   regression_tracker:
     <<: *base-service

@@ -7,7 +7,7 @@ verbose = true
 poll_period = 0
 startup_delay = 1
 force = true
-build_configs = "mainline"
+build_configs = "local"
 
 [tarball]
 kdir = "/home/kernelci/data/src/linux"
