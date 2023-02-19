@@ -21,6 +21,7 @@ services:
     volumes: &base-volumes
       - './src:/home/kernelci/pipeline'
       - './config:/home/kernelci/config'
+      - './data/output:/home/kernelci/output'
 
   scheduler: &scheduler
     container_name: 'kernelci-pipeline-scheduler'
@@ -32,10 +33,7 @@ services:
       - '--settings=${KCI_SETTINGS:-/home/kernelci/config/kernelci.toml}'
       - 'loop'
       - '--runtimes=shell'
-    volumes:
-      - './src:/home/kernelci/pipeline'
-      - './config:/home/kernelci/config'
-      - './data/output:/home/kernelci/output'
+    volumes: *base-volumes
 
   scheduler-docker:
     <<: *scheduler
