@@ -18,6 +18,7 @@ storage_config = "docker-host"
 output = "/home/kernelci/output"
 
 [notifier]
+log_file = "/home/kernelci/output/notifier.txt"
 
 [send_kcidb]
 kcidb_topic_name = "playground_kcidb_new"
