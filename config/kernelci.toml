@@ -5,7 +5,7 @@ verbose = true
 
 [trigger]
 poll_period = 0
-startup_delay = 3
+startup_delay = 1
 force = true
 build_configs = "mainline"
 
