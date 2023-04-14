@@ -15,10 +15,10 @@ output = "/home/kernelci/data/output"
 storage_config = "docker-host"
 
 [scheduler]
-output = "/home/kernelci/output"
+output = "/home/kernelci/data/output"
 
 [notifier]
-log_file = "/home/kernelci/output/notifier.txt"
+log_file = "/home/kernelci/data/output/notifier.txt"
 
 [send_kcidb]
 kcidb_topic_name = "playground_kcidb_new"
