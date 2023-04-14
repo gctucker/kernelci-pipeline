@@ -57,7 +57,7 @@ runtimes:
     volumes:
       # Note: Absolute paths on the host are required here
       - '/home/gtucker/src/kernelci-pipeline/data/ssh/:/home/kernelci/data/ssh'
-      - '/home/gtucker/src/kernelci-pipeline/data/output/:/home/kernelci/data/output'
+      - '/home/gtucker/src/kernelci-pipeline/data/output/:/home/kernelci/output'
 
   k8s-gke-eu-west4:
     lab_type: kubernetes
