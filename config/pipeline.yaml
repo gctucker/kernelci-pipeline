@@ -234,5 +234,5 @@ build_configs:
 
   local:
     tree: local
-    branch: 'master'
+    branch: 'local-pipeline'
     variants: *build-variants
