@@ -1,4 +1,4 @@
-FROM kernelci/staging-kernelci
+FROM gtucker/kernelci
 
 WORKDIR /home/kernelci/callback
 COPY requirements.txt .
