@@ -30,12 +30,33 @@ class Monitor(Service):
         )
 
     def _setup(self, args):
+        self._open_log_file(args.log_file)
         return self._api.subscribe('node')
 
     def _stop(self, sub_id):
         if sub_id:
             self._api.unsubscribe(sub_id)
+        if self._log_file:
+            self._log_file.close()
         sys.stdout.flush()
+
+    def _open_log_file(self, log_file, log_limit=20):
+        if log_file:
+            self._log_file = open(log_file, 'r+')
+            lines = self._log_file.readlines()
+            for line in lines[-log_limit:]:
+                print(line, flush=True, end='')
+        else:
+            self._log_file = None
+
+    def _log(self, line):
+        print(line, flush=True)
+        if self._log_file:
+            self._log_file.write(line)
+            self._log_file.write('\n')
+
+    def _dump_log(self):
+        pass
 
     def _run(self, sub_id):
         state_map = {
@@ -55,20 +76,27 @@ class Monitor(Service):
 
         self.log.info("Listening for events... ")
         self.log.info("Press Ctrl-C to stop.")
-        print(self._log_titles, flush=True)
+        line_number = 0
 
         while True:
+            if line_number == 0:
+                print(self._log_titles, flush=True)
+                line_number = 2
+            else:
+                line_number += 1
+
             event = self._api.receive_event(sub_id)
             obj = event.data
             dt = datetime.datetime.fromisoformat(event['time'])
-            print(self.LOG_FMT.format(
+            log_line = self.LOG_FMT.format(
                 time=dt.strftime('%Y-%m-%d %H:%M:%S.%f'),
                 commit=obj['revision']['commit'][:12],
                 id=obj['id'],
                 state=state_map[obj['state']],
                 result=result_map[obj['result']],
                 name=obj['name']
-            ), flush=True)
+            )
+            self._log(log_line)
 
         return True
 
@@ -76,6 +104,12 @@ class Monitor(Service):
 class cmd_run(Command):
     help = "Listen for events and report them on stdout"
     args = [Args.api_config]
+    opt_args = [
+        {
+            'name': '--log-file',
+            'help': "Path to a log file with the notifier's history",
+        },
+    ]
 
     def __call__(self, configs, args):
         return Monitor(configs, args).run(args)
