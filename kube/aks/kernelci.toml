@@ -6,7 +6,7 @@ storage_config = "early-access-azure"
 [trigger]
 poll_period = 3600
 startup_delay = 3
-build_configs = "mainline"
+build_configs = "kernelci_staging-mainline"
 
 [tarball]
 kdir = "/home/kernelci/pipeline/data/src/linux"
